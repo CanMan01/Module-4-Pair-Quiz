@@ -5,26 +5,137 @@ date: "7/30/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+## Question 2
+
+## A.
+
+<font size="4.5">
+To help us find the multiple linear regression model, we store the data values in an excel sheet and read them from there. After, we can plot the data points. Using the lm function in R, we can obtain some useful numbers to help find the multiple regression model of our data set.
+``` {r question2, echo=TRUE}
+library(readxl)
+q2 <- read_excel("~/GitHub/Module-4-Pair-Quiz/question2.xls")
+plot(q2)
+
+Brightness <- q2$Brightness
+Contrast <- q2$Contrast
+Useful_Range <-q2$`Useful Range`
+
+
+multiple_regression <- lm(Useful_Range ~ Brightness + Contrast, data=q2)
+summary(multiple_regression)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+We obtain values such as the Residuals, coefficients,t-values, and residual standard error. We even get the p-value of the whole data set.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+
+From the coefficients above, we can form the multiple linear regression model below
+
+We use: 
+
+$\hat{y} = Intercept + CoeffBrightness(X_1) + CoeffContrast(X_2)$
+
+</font>
+
+$$Useful Range = 224.7179 + (0.7768)(X_1) + (-3.2017)(X_2)$$
+
+## B.
+<font size="4.5">
+Estimate $\sigma^2$
+
+We use the formula:
+$\sigma^2 = \frac{SSE}{n-(k+1)}$, where k is the number of coefficients
+
+SSE here is obtained from the intercept of Error values from the lm table above.
+``` {r studio, echo=FALSE}
+sig <- ((50.1217)^2)/6
+sig
 ```
+Thus, $\sigma^2 \approx 418.70$
 
-## Including Plots
+This estimate is close to the values obtained when using the variance function for the values for Question 2.
+</font>
 
-You can also embed plots, for example:
+## C.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+<font size="4.5">
+Standard errors of Regression Coefficients
+
+Taking these values from the lm function above:
+
+$Brightness = 0.8514$
+
+$Contrast = 0.9667$
+</font>
+
+## D.
+<font size="4.5">
+We can use the coefficients for Brightness and Contrast to predict Useful Range.
+Given:
+Brightness = 80 
+Contrast = 75
+
+We plug in Brightness into $X_1$ and Contrast into $X_2$
+
+$$Useful Range = 224.7179 + (0.7768)(80) + (-3.2017)(75)$$
+
+``` {r UsefulRange, include=TRUE, echo=FALSE}
+224.7179 + (0.7768*80) + (-3.2017*75)
 ```
+Thus, the value of Useful Range when Brightness is 80 and Contrast is 75 is
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+$Useful Range = 46.7344$
+
+</font>
+
+## E.
+<font size="4.5">
+Testing for significance of regression
+
+We can use the p-value of 0.02992 from above.
+
+Then, we can compare this p-value of 0.02992 to alpha = 0.05
+
+$0.02992 < 0.05$
+
+Thus, we conclude that the regression is significant and can be observed between the values.
+</font>
+
+## F.
+<font size="4.5">
+
+We form the hypothesis:
+
+$H_0: \beta_1 = 0$ - meaning no relationship in the regression model. Amounts to a bad predictor
+
+$H_1: \beta_1 > 0$ - meaning strong relationship in the regression model. Amounts to a good predictor.
+
+Using the equation:
+
+$t_1 = \frac{b_1}{se(b_1)}$
+
+t-value of Brightness
+$t_1 = \frac{0.7768}{0.8514}=0.912$
+
+Then we find p-value at $\alpha=0.05$ using pnorm
+```{r pvalueB, echo=FALSE}
+bt <- pnorm(0.912, lower.tail=FALSE)
+bt
+```
+Greater than $\alpha=0.05$
+
+Because the p-value is greater than 0.05, this means that the variable of Brightness is not a good predictor of the regression model.
+
+
+t-value of Contrast
+$t_2 = \frac{-3.2017}{0.9667}=-3.312$
+```{r pvalueC, echo=FALSE}
+d <-pnorm(-3.312)
+d
+```
+Lesser than $\alpha=0.05$
+
+This means that the p-value obtained from this shows that the Contrast variable is a good predictor of the regression model.
+</font>
