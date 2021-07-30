@@ -5,26 +5,133 @@ date: "7/30/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## *Question 1*
+<p>&nbsp;</p>
+<font size = "3"> An article in the Journal of Sound and Vibration ["Measurement of Noise-Evoked Blood Pressure by Means of Averaging Method: Relation between Blood Pressure Rise and PSL" (1991, Vol. 151(3), pp. 383-394)] described a study investigating the relationship between noise exposure and hypertension. The following data are representative of those reported in the article. </font>
+<p>&nbsp;</p>
+
+  **A**
+<p>&nbsp;</p>
+<font size = "3"> a) Draw a scatter diagram of y (blood pressure rise in millimeters of mercury) versus x (sound pressure level in decibels). Does a simple linear regression model seem reasonable in this situation? </font>
+<p>&nbsp;</p>
+
+```{r Q1scatterplot, echo =FALSE}
+library(readxl)
+testing <- read_excel("testing.xlsx")
+x <- testing$x
+y <- testing$y
+n <- 20
+plot(x, y, main = "Scatterplot x and y", xlab = "(x) Sound pressure level in decibels (decibels/dB)", ylab = "(y) Blood pressure (milimeters/mL of mercury)")
+
+```
+<p>&nbsp;</p>
+  <font size = "3"> The scatter plot was plotted down using the code above. On first glance, if an imaginary line were to be put in the center amidst the points, there would be a fairly good correlation. However to confirm it with numbers, a regression analysis was done. For a regression model to be adequate, a residual analysis must be conducted</font>
+<p>&nbsp;</p>
+```{r Q1equation, echo=FALSE}
+# equation for slope  
+m <- ((sum(x * y) - ((sum(x) * sum(y)))/20)) / (sum(x^2) - (((sum(x))^2) / 20))
+m
+# solving for the set of y-hats
+x_bar <- (sum(x)) / 20
+y_bar <- (sum(y)) / 20
+intercept <- y_bar - (m * x_bar)
+intercept
+
+lm(y~x)
+```
+<p>&nbsp;</p>
+  <font size = "3"><center> The code above was used to obtain the equation </font></center>
+$$\widehat{y} = `r m`(x) + (`r intercept`)$$
+<p>&nbsp;</p>
+
+```{r Q1yhats, echo=TRUE}
+# solving for set_residuals
+set_y_hats <- (m * x) + intercept
+
+```
+<p>&nbsp;</p>
+
+<font size = "3">Then using this equation, using each x-value in the set, we get a y hat value. The code above was used to do that </font>
+
+<p>&nbsp;</p>
+
+```{r Q1residuals, echo=TRUE}
+set_residuals <- y -set_y_hats
+set_residuals
+shapiro.test(set_residuals)
+plot(set_y_hats, set_residuals, main = "Fitted Values vs Residuals", xlab = "Fitted Values", ylab = "Residuals")
+```
+<p>&nbsp;</p>
+<font size = "3">Then the set of residuals was made using the code above and a scatter plot. Using the Shapiro Wilk test, the set of residuals is normally distributed since the the p-value is more than 0.05. Based of the scatter plot of fitted values and residuals, the points are random variables  due to its random spread of the graph. The variance is constant since there is a regular thickness in terms of spread as we move left to right. Thus a simple linear regression model is appropriate. Another test can be done using the coefficient of Determination.  </font>
+<p>&nbsp;</p>
+
+``` {r Q1 coefficient of determination, echo =TRUE}
+
+k_determination <- (cor(x, y)^2)
+
+k_determination
+
 ```
 
-## R Markdown
+<p>&nbsp;</p>
+<font size = "3">The above code was used to find the correlation coefficient. Since squaring that will give the coefficient of determination, the above code was used. </font>
+<p>&nbsp;</p>
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+$$R^2 = 1 - \frac{SS_E}{SS_T} = `r k_determination`$$
+<p>&nbsp;</p>
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+  <font size = "3"> Since the number above is in between 0 and 1 and the value is relatively high, which indicates a strong ability to predict outcomes, we can also conclude that a simple linear regression model can be used. </font>
+  
+<p>&nbsp;</p>
 
-```{r cars}
-summary(cars)
+ <font size = "3"> Answer: Simple linear regression model is suitable for the given situation. </font>
+ 
+<p>&nbsp;</p>
+  **B**
+<p>&nbsp;</p>
+<font size = "3"> b) Fit the simple linear regression model using least squares. Find an estimate of σ2.</font>
+<p>&nbsp;</p>
+
+```{r Q2_line, echo =TRUE}
+plot(x, y, main = "Scatterplot x and y", xlab = "(x) Sound pressure level in decibels (decibels/dB)", ylab = "(y) Blood pressure (milimeters/mL of mercury)")
+abline(lm(y~x), col = "red")
+
 ```
+<p>&nbsp;</p>
+<font size ="3">The above code was used to plot a simple linear regression model. With the function lm, the line was plotted for the scatter plot. </font>
+<p>&nbsp;</p>
+``` {r Q2_estimator, echo = TRUE}
+estimator <- (sum((y - set_y_hats) ^ 2)) / (n - 2)
+estimator
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
+<p>&nbsp;</p>
+<font size ="3">The above code was used to find the unbiased estimator.  </font>
+<p>&nbsp;</p>
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+<font size ="3"> Final answer: </font>
+$$UnbiasedEstimator =  `estimator`$$
+<p>&nbsp;</p>
+
+  **C**
+<p>&nbsp;</p>
+<font size = "3"> c) Find the predicted mean rise in blood pressure level associated with a sound pressure level of 85 decibels.</font>
+<p>&nbsp;</p>
+
+```{r Q3_Mean, echo = TRUE}
+new_y <- (m * 85) + intercept
+new_y
+```
+<p>&nbsp;</p>
+
+<font size = "3"> Using the code above and the equation of the line obtained in a), the value 85 replaced x to get the new observation y.</font>
+
+<p>&nbsp;</p>
+
+<font size = "3"> Using the code above and the equation of the line obtained in a), the value 85 replaced x to get the new observation y.</font>
+
+<p>&nbsp;</p>
+
+<font size = "3">Answer: </font>
+$$PredictedMean Rise = (`r m` * 85) + `r intercept` = `r new_y`$$
+<p>&nbsp;</p>
